@@ -82,16 +82,16 @@ After reading, a reader should be able to (1) formulate a budgeted selection pro
 | Level | Command | Time | What you get |
 |---|---|---|---|
 | 0. Inspect | Open `results/` | Minutes | Tables, figures and per-run data, no installation needed |
-| 1. Rebuild tables and figures | `python qaoa_penalty_sensitivity.py --replot --outdir results/exact` | Seconds | Regenerates `summary.md` and the figures from `records.jsonl` |
-| 2. Smoke test | `python qaoa_penalty_sensitivity.py --quick` | ~30 s | 3 values of A, 2 restarts, p = 1 and 2 |
+| 1. Rebuild tables and figures | `python main.py.py --replot --outdir results/exact` | Seconds | Regenerates `summary.md` and the figures from `records.jsonl` |
+| 2. Smoke test | `python main.py.py --quick` | ~30 s | 3 values of A, 2 restarts, p = 1 and 2 |
 | 3. Full reference runs | See below | ~7 min, ~2 min, ~2 min | The three result sets |
 
 ```bash
 pip install -r requirements.txt
 
-python qaoa_penalty_sensitivity.py --outdir results/exact                                # ~7 min (413 s measured), 1 CPU core
-python qaoa_penalty_sensitivity.py --backend aer-noise --outdir results/noisy_generic     # ~2 min (132 s); needs qiskit-aer
-python qaoa_penalty_sensitivity.py --no-normalize --outdir results/ablation_no_normalize  # ~2 min (108 s)
+python main.py.py --outdir results/exact                                # ~7 min (413 s measured), 1 CPU core
+python main.py.py --backend aer-noise --outdir results/noisy_generic     # ~2 min (132 s); needs qiskit-aer
+python main.py.py --no-normalize --outdir results/ablation_no_normalize  # ~2 min (108 s)
 ```
 
 **Determinism.** All random choices are seeded (`--seed 7`, with a separate generator per A, p and restart), the exact backend has no sampling noise in the cost, and the final shot distribution uses a seeded sampler. In a check across sessions, a `--quick` run reproduced all 12 matching (A, p, restart) entries of the delivered full run exactly (evaluation counts, feasibility and final cost); timings are not reproducible.
@@ -130,14 +130,14 @@ Every COBYLA evaluation is one job, so the optimization cannot run on the Qollab
 
 | Step | Where | What |
 |---|---|---|
-| 1. Optimize | Local machine, exact statevector | `python qaoa_penalty_sensitivity.py --outdir results/exact` produces the full study |
+| 1. Optimize | Local machine, exact statevector | `python main.py.py --outdir results/exact` produces the full study |
 | 2. Select | Already done | `qollab_validation_records.jsonl` keeps, for every (A, p), the restart selected by cost (22 records, with optimal angles) |
 | 3. Validate | Qollab (needs only Qiskit, NumPy, SciPy and Matplotlib) | One sampler call (one circuit, one job) runs the stored angles for one value of A on the selected backend and compares the result with the noiseless distribution |
 
-The Code Playground runs the file as a script and does not accept command-line arguments, so the script falls back to the list `QOLLAB_DEFAULT_ARGS` at the top of the file whenever it finds an injected `backend` and no arguments (A = 7.5, p = 2, 8192 shots). Without an injected `backend` (a normal local run) the same defaults reproduce the full study. To run step 3 upload `qaoa_penalty_sensitivity.py` and `qollab_validation_records.jsonl` to the project (uploaded files sit in the working-directory root, where the script looks for them), select the IonQ simulator and its noise model in the run menu and press Run. Each run validates one value of A, so edit `QOLLAB_DEFAULT_ARGS` and run again for others (for example A = 0.25). Outside the playground, or if arguments ever become available:
+The Code Playground runs the file as a script and does not accept command-line arguments, so the script falls back to the list `QOLLAB_DEFAULT_ARGS` at the top of the file whenever it finds an injected `backend` and no arguments (A = 7.5, p = 2, 8192 shots). Without an injected `backend` (a normal local run) the same defaults reproduce the full study. To run step 3 upload `main.py.py` and `qollab_validation_records.jsonl` to the project (uploaded files sit in the working-directory root, where the script looks for them), select the IonQ simulator and its noise model in the run menu and press Run. Each run validates one value of A, so edit `QOLLAB_DEFAULT_ARGS` and run again for others (for example A = 0.25). Outside the playground, or if arguments ever become available:
 
 ```bash
-python qaoa_penalty_sensitivity.py --backend qollab --validate-on-backend \
+python main.py.py --backend qollab --validate-on-backend \
     --records qollab_validation_records.jsonl --validate-A 7.5 --validate-p 2 \
     --final-shots 8192 --qollab-noise-model forte-1
 ```
@@ -149,7 +149,7 @@ The output is a table (feasibility, AR_bio, P_opt, AR_H: noiseless versus backen
 **Included plug-in.** `qollab_sampler.py` is the optional file for `--backend custom`. Its mode is set with the `QOLLAB_MODE` environment variable (`local` by default, `ionq-simulator`, `qollab`); see the comments inside the file. The built-in `--backend qollab` option needs no plug-in.
 
 ```bash
-python qaoa_penalty_sensitivity.py --backend custom --sampler-factory qollab_sampler.py:make_sampler
+python main.py.py --backend custom --sampler-factory qollab_sampler.py:make_sampler
 ```
 
 For any remote backend outside Qollab, every COBYLA evaluation is one job: start small, for example `--backend ionq --restarts 2 --maxiter 60 --A-values 1 3 10 --depths 1 --shots 1024 --final-shots 1024`, and check queue time and cost first.

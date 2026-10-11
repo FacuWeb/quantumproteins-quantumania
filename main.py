@@ -49,12 +49,12 @@ Dependencies
 
 Quick use
 ---------
-  python qaoa_penalty_sensitivity.py --quick
-  python qaoa_penalty_sensitivity.py                       # reference configuration
-  python qaoa_penalty_sensitivity.py --backend aer-noise   # generic noise (NOT IonQ-calibrated)
+  python main.py.py --quick
+  python main.py.py                       # reference configuration
+  python main.py.py --backend aer-noise   # generic noise (NOT IonQ-calibrated)
   # Qollab: optimize locally, then validate ONE stored optimum per run on the injected `backend`
-  python qaoa_penalty_sensitivity.py --backend qollab --validate-on-backend --records qollab_validation_records.jsonl
-  IONQ_API_KEY=... python qaoa_penalty_sensitivity.py --backend ionq --restarts 2 --maxiter 60
+  python main.py.py --backend qollab --validate-on-backend --records qollab_validation_records.jsonl
+  IONQ_API_KEY=... python main.py.py --backend ionq --restarts 2 --maxiter 60
 
 MIT License
 Copyright (c) 2026 Facundo Ramírez
@@ -686,7 +686,7 @@ def validate_on_backend(args):
 # 6. Command line
 # ----------------------------------------------------------------------------
 def parse_args(argv=None):
-    ap = argparse.ArgumentParser(prog="qaoa_penalty_sensitivity.py",   # explicit: sys.argv may be empty in a playground
+    ap = argparse.ArgumentParser(prog="main.py.py",   # explicit: sys.argv may be empty in a playground
                                  description="Lagrange-penalty sensitivity of QAOA for budgeted interactor selection")
     ap.add_argument("--n", type=int, default=6, choices=[5, 6], help="number of candidate proteins")
     ap.add_argument("--k", type=int, default=3, choices=[2, 3], help="budget: proteins to select")

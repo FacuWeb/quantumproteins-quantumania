@@ -8,7 +8,7 @@ License: MIT (see LICENSE).
 
 Usage
 -----
-    python qaoa_penalty_sensitivity.py --backend custom \
+    python main.py.py --backend custom \
         --sampler-factory qollab_sampler.py:make_sampler
 
 The script calls make_sampler(args) and accepts either `sampler` or

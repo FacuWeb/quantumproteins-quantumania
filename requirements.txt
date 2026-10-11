@@ -1,0 +1,14 @@
+# Declared libraries
+numpy
+scipy
+matplotlib
+qiskit>=1.2,<2          # Qiskit 1.x (V2 primitives: StatevectorEstimator / StatevectorSampler)
+networkx
+
+# Optional
+# qiskit-aer>=0.15,<0.18   # --backend aer-noise
+# qiskit-ionq<1.0          # --backend ionq (qiskit-ionq 1.x installs Qiskit 2.x)
+
+# Versions used for the reference runs:
+# qiskit 1.4.6, qiskit-aer 0.17.2, networkx 3.6.1, numpy 2.4.4, scipy 1.17.1,
+# matplotlib 3.10.8, Python 3.12.3
